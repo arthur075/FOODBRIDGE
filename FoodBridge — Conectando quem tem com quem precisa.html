@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FoodBridge — Conectando quem tem com quem precisa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F1EEE2; --panel:#FFFFFF; --ink:#20291F; --ink-soft:#59634F;
+  --green:#3F6B44; --green-deep:#243B27; --green-tint:#E3EBDD;
+  --amber:#B87F26; --amber-tint:#F3E4C4;
+  --blue:#33566F; --blue-tint:#DCE6EC;
+  --red:#A6432B; --red-tint:#F1DAD1;
+  --line:#DAD3C0; --radius:10px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#151912; --panel:#1E241A; --ink:#EDEAE0; --ink-soft:#B7BDA9;
+    --green-tint:#25302073; --amber-tint:#3A2E1780; --blue-tint:#1E2A3280; --red-tint:#3A211980;
+    --line:#333A29;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151912; --panel:#1E241A; --ink:#EDEAE0; --ink-soft:#B7BDA9;
+  --green-tint:#25302073; --amber-tint:#3A2E1780; --blue-tint:#1E2A3280; --red-tint:#3A211980;
+  --line:#333A29;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;height:100%;line-height:1.5}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;font-weight:600;margin:0 0 .3em;letter-spacing:-.01em;color:var(--green-deep)}
+:root[data-theme] h1,:root[data-theme] h2,:root[data-theme] h3{color:var(--ink)}
+@media (prefers-color-scheme:dark){h1,h2,h3{color:var(--ink)}}
+p{color:var(--ink-soft);max-width:62ch}
+button{font-family:inherit}
+.layout{display:flex;min-height:100%}
+nav.side{width:230px;flex:none;background:var(--green-deep);color:#EDF1E7;padding:24px 14px;position:sticky;top:0;height:100vh;overflow-y:auto}
+nav.side .brand{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;padding:0 8px 18px;border-bottom:1px solid #3d5340;margin-bottom:14px}
+nav.side .brand small{display:block;font-family:'Inter';font-size:.66rem;font-weight:500;letter-spacing:.03em;color:#B9C7B4;margin-top:3px}
+nav.side button{display:block;width:100%;text-align:left;background:none;border:none;color:#D7E0D0;padding:9px 10px;border-radius:8px;font-size:.87rem;cursor:pointer;margin-bottom:2px}
+nav.side button:hover{background:#33482f}
+nav.side button.active{background:#4A6B47;color:#fff;font-weight:600}
+main{flex:1;padding:36px 44px 80px;max-width:1040px}
+.topbar{display:none}
+.section{display:none;animation:fade .35s ease}
+.section.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:.72rem;color:var(--green);font-weight:600;margin-bottom:8px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+.stat b{display:block;font-family:'Fraunces',serif;font-size:1.7rem;color:var(--green)}
+.stat span{font-size:.78rem;color:var(--ink-soft)}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:22px 0}
+.flow .node{background:var(--green-tint);border:1px solid var(--line);padding:10px 16px;border-radius:8px;font-size:.85rem;font-weight:600}
+.flow .arrow{color:var(--ink-soft)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--ink-soft);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.03em}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:.72rem;font-weight:600}
+.b-green{background:var(--green-tint);color:var(--green)}
+.b-amber{background:var(--amber-tint);color:var(--amber)}
+.b-red{background:var(--red-tint);color:var(--red)}
+.b-blue{background:var(--blue-tint);color:var(--blue)}
+label{display:block;font-size:.78rem;font-weight:600;margin:10px 0 4px;color:var(--ink-soft)}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font-size:.85rem;font-family:inherit}
+.btn{display:inline-block;background:var(--green);color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:600;font-size:.85rem;cursor:pointer;margin-top:14px}
+.btn.ghost{background:none;border:1px solid var(--green);color:var(--green)}
+.pipe{display:flex;gap:4px;margin:20px 0;flex-wrap:wrap}
+.pipe div{flex:1;min-width:110px;padding:10px 6px;text-align:center;border-radius:8px;font-size:.76rem;font-weight:600;background:var(--panel);border:1px solid var(--line);color:var(--ink-soft)}
+.pipe div.on{background:var(--green);color:#fff;border-color:var(--green)}
+.match{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center}
+@media(max-width:700px){.match{grid-template-columns:1fr}}
+.formula{background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:10px 14px;font-size:.82rem;color:var(--ink-soft);font-family:ui-monospace,Menlo,monospace}
+.mapwrap{position:relative;background:var(--green-tint);border:1px solid var(--line);border-radius:var(--radius);height:400px;overflow:hidden}
+.mapwrap svg{width:100%;height:100%}
+.dot{cursor:pointer}
+.legend{display:flex;gap:18px;margin:10px 0;font-size:.8rem;color:var(--ink-soft)}
+.legend span.d{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.filters{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.filters select{width:auto}
+.riskbar{height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:6px}
+.riskbar i{display:block;height:100%}
+.regionrow{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:.85rem}
+.footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);font-size:.78rem;color:var(--ink-soft)}
+.note{font-size:.78rem;color:var(--ink-soft);background:var(--amber-tint);border-radius:8px;padding:8px 12px;display:inline-block;margin-top:10px}
+.tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pill{background:var(--blue-tint);color:var(--blue);border-radius:20px;padding:5px 12px;font-size:.74rem;font-weight:600}
+.maptabs{display:flex;gap:8px;margin-bottom:12px}
+.maptab{background:var(--panel);border:1px solid var(--line);color:var(--ink-soft);padding:7px 14px;border-radius:20px;font-size:.8rem;font-weight:600;cursor:pointer}
+.maptab.active{background:var(--green);color:#fff;border-color:var(--green)}
+tr.row-click{cursor:pointer;transition:background .15s}
+tr.row-click:hover{background:var(--green-tint)}
+.pipe div.clickable{cursor:pointer}
+.slider-row{margin:14px 0}
+.slider-row label{display:flex;justify-content:space-between;font-size:.78rem;font-weight:600;color:var(--ink-soft);margin-bottom:4px}
+input[type=range]{width:100%;accent-color:var(--green)}
+.successMsg{color:var(--green);font-size:.82rem;font-weight:600;margin-top:10px;display:none}
+.successMsg.show{display:block}
+.searchbar{margin:14px 0}
+@media(max-width:900px){
+  .layout{flex-direction:column}
+  nav.side{display:none}
+  .topbar{display:flex;overflow-x:auto;gap:4px;background:var(--green-deep);padding:10px 12px;position:sticky;top:0;z-index:5}
+  .topbar button{flex:none;background:none;border:none;color:#D7E0D0;padding:8px 12px;border-radius:20px;font-size:.78rem;white-space:nowrap}
+  .topbar button.active{background:#4A6B47;color:#fff}
+  main{padding:22px 18px 60px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="side" id="sidenav"></nav>
+  <div style="flex:1;min-width:0">
+    <div class="topbar" id="topnav"></div>
+    <main id="main"></main>
+  </div>
+</div>
+
+<script>
+const SECTIONS = [
+ {id:'inicio', label:'Início'},
+ {id:'dashboard', label:'Dashboard'},
+ {id:'cadastro', label:'Cadastro'},
+ {id:'alimentos', label:'Alimentos'},
+ {id:'match', label:'Match & IA'},
+ {id:'mapa', label:'Mapa'},
+ {id:'frio', label:'Cadeia de Frio'},
+ {id:'doacoes', label:'Doações'},
+ {id:'impacto', label:'Impacto & Governo'},
+ {id:'roadmap', label:'Roadmap'},
+];
+
+const content = {
+inicio: `
+ <div class="eyebrow">FOODBRIDGE</div>
+ <h1 style="font-size:2.3rem;max-width:14ch">Conectando quem tem com quem precisa.</h1>
+ <p>Uma plataforma que liga excedentes de alimentos a quem mais precisa deles — combatendo o desperdício, reforçando a segurança alimentar e dando ao poder público dados reais para planejar melhor.</p>
+ <div class="flow">
+   <div class="node">🟢 Doadores</div><span class="arrow">→</span>
+   <div class="node">🧊 Refrigeração</div><span class="arrow">→</span>
+   <div class="node">🚚 Redistribuição</div><span class="arrow">→</span>
+   <div class="node">🔵 Receptores</div>
+ </div>
+ <div class="grid g4">
+   <div class="stat"><b>2.842 t</b><span>alimentos salvos</span></div>
+   <div class="stat"><b>1,2 mi</b><span>famílias atendidas</span></div>
+   <div class="stat"><b>5.340 t</b><span>CO₂ evitado</span></div>
+   <div class="stat"><b>128.540</b><span>doações realizadas</span></div>
+ </div>
+ <p class="note">Todos os dados deste protótipo são simulados, para fins de demonstração.</p>
+`,
+dashboard: `
+ <div class="eyebrow">VISÃO GERAL</div>
+ <h2>Dashboard de impacto</h2>
+ <p>Indicadores consolidados da operação da rede FoodBridge — período: <select id="dashPeriod" onchange="renderDash()" style="width:auto;display:inline-block"><option value="1">esta semana</option><option value="4">últimas 4 semanas</option><option value="12">este trimestre</option></select></p>
+ <div class="grid g3" id="dashStats" style="margin-top:18px"></div>
+ <div class="card" style="margin-top:18px">
+   <h3 style="font-size:1rem">Doações por status</h3>
+   <div class="regionrow"><span>Entregue</span><div class="riskbar" style="width:60%"><i id="barEntregue" style="width:0%;background:var(--green);transition:width .6s"></i></div></div>
+   <div class="regionrow"><span>Em transporte</span><div class="riskbar" style="width:60%"><i id="barTransporte" style="width:0%;background:var(--blue);transition:width .6s"></i></div></div>
+   <div class="regionrow" style="border:none"><span>Match confirmado</span><div class="riskbar" style="width:60%"><i id="barConfirmado" style="width:0%;background:var(--amber);transition:width .6s"></i></div></div>
+ </div>
+`,
+cadastro: `
+ <div class="eyebrow">CADASTRO</div>
+ <h2>Doadores e receptores</h2>
+ <p>Formulário simulado — os dados não são enviados a nenhum servidor.</p>
+ <div class="grid g2" style="margin-top:16px">
+   <div class="card">
+     <h3 style="font-size:1rem">🟢 Cadastro de doador</h3>
+     <label>Nome / Razão social</label><input id="dNome" placeholder="Supermercado Bom Preço">
+     <label>Tipo</label>
+     <select><option>Supermercado</option><option>Restaurante</option><option>Padaria</option><option>Escola</option><option>Produtor rural</option><option>Feira</option></select>
+     <label>CNPJ</label><input placeholder="00.000.000/0001-00">
+     <label>Endereço</label><input placeholder="Rua, número, bairro, cidade">
+     <label>Capacidade / Frequência</label><input placeholder="Ex: 200kg, diariamente">
+     <button class="btn" type="button" onclick="fakeSubmit('doador')">Cadastrar doador</button>
+     <div class="successMsg" id="msgDoador">✓ Doador cadastrado — a localização será convertida em latitude/longitude automaticamente.</div>
+   </div>
+   <div class="card">
+     <h3 style="font-size:1rem">🔵 Cadastro de receptor</h3>
+     <label>Nome da instituição</label><input id="rNome" placeholder="ONG Esperança">
+     <label>Tipo</label>
+     <select><option>ONG</option><option>Abrigo</option><option>Cozinha comunitária</option><option>Instituição social</option><option>Escola / programa público</option></select>
+     <label>CNPJ</label><input placeholder="00.000.000/0001-00">
+     <label>Endereço</label><input placeholder="Rua, número, bairro, cidade">
+     <label>Demanda / Capacidade de recebimento</label><input placeholder="Ex: 300kg/semana">
+     <button class="btn" type="button" onclick="fakeSubmit('receptor')">Cadastrar receptor</button>
+     <div class="successMsg" id="msgReceptor">✓ Receptor cadastrado — já passa a receber sugestões de match.</div>
+   </div>
+ </div>
+`,
+alimentos: `
+ <div class="eyebrow">GESTÃO DE ALIMENTOS</div>
+ <h2>Excedentes e rotatividade</h2>
+ <p>Itens cadastrados pelos doadores, com análise automática de risco de desperdício. Clique numa linha para ver a sugestão de match.</p>
+ <label style="margin-top:18px">Novo item</label>
+ <div class="grid g4">
+   <input placeholder="Produto (ex: Banana)">
+   <input placeholder="Quantidade (kg)">
+   <input placeholder="Validade">
+   <input placeholder="Origem">
+ </div>
+ <button class="btn" type="button" onclick="addFood()">Adicionar alimento</button>
+ <div class="searchbar"><input id="foodSearch" placeholder="Buscar alimento na lista..." oninput="filterFoods()"></div>
+ <div class="card" style="margin-top:6px;padding:0;overflow:auto">
+ <table id="foodTable">
+  <tr><th>Produto</th><th>Qtd.</th><th>Validade</th><th>Rotatividade</th><th>Risco</th></tr>
+  <tr class="row-click" data-name="Banana" onclick="showFoodMatch('Banana')"><td>Banana</td><td>120 kg</td><td>2 dias</td><td><span class="badge b-red">Baixa</span></td><td><span class="badge b-red">Alto</span></td></tr>
+  <tr class="row-click" data-name="Pão francês" onclick="showFoodMatch('Pão francês')"><td>Pão francês</td><td>40 kg</td><td>1 dia</td><td><span class="badge b-amber">Média</span></td><td><span class="badge b-amber">Médio</span></td></tr>
+  <tr class="row-click" data-name="Tomate" onclick="showFoodMatch('Tomate')"><td>Tomate</td><td>85 kg</td><td>3 dias</td><td><span class="badge b-amber">Média</span></td><td><span class="badge b-amber">Médio</span></td></tr>
+  <tr class="row-click" data-name="Arroz (pacotes)" onclick="showFoodMatch('Arroz (pacotes)')"><td>Arroz (pacotes)</td><td>300 kg</td><td>180 dias</td><td><span class="badge b-green">Alta</span></td><td><span class="badge b-green">Baixo</span></td></tr>
+  <tr class="row-click" data-name="Leite" onclick="showFoodMatch('Leite')"><td>Leite</td><td>60 L</td><td>4 dias</td><td><span class="badge b-green">Alta</span></td><td><span class="badge b-green">Baixo</span></td></tr>
+ </table>
+ </div>
+ <div class="card" id="foodMatchOut" style="margin-top:14px">Clique num alimento da tabela para ver o receptor mais compatível.</div>
+ <div class="card" style="margin-top:16px">
+   <h3 style="font-size:.95rem">Previsão da IA preditiva</h3>
+   <p style="margin:0">Hortifruti — previsão de excesso: <b style="color:var(--ink)">120 kg amanhã</b>. Recomendação: <span class="badge b-amber">redistribuição prioritária</span>.</p>
+ </div>
+`,
+match: `
+ <div class="eyebrow">IA / MATCH</div>
+ <h2>Algoritmo de compatibilidade</h2>
+ <p>Cada excedente é cruzado com os receptores próximos usando três critérios.</p>
+ <div class="grid g3" style="margin:16px 0">
+   <div class="stat"><b>50%</b><span>proximidade</span></div>
+   <div class="stat"><b>30%</b><span>compatibilidade alimentar</span></div>
+   <div class="stat"><b>20%</b><span>urgência da validade</span></div>
+ </div>
+ <div class="formula">Score = (proximidade × 0,50) + (compatibilidade × 0,30) + (urgência × 0,20)<br>distância calculada por Haversine, a partir de latitude/longitude</div>
+ <div class="card" style="margin-top:22px">
+   <div class="match">
+     <div>
+       <div class="eyebrow">EXCEDENTE</div>
+       <h3 style="font-size:1.1rem" id="mProd">Banana — 120 kg</h3>
+       <p style="margin:0" id="mValid">Validade: 2 dias</p>
+     </div>
+     <div style="font-size:1.4rem;color:var(--ink-soft)">→</div>
+     <div>
+       <div class="eyebrow">MELHOR RECEPTOR</div>
+       <h3 style="font-size:1.1rem" id="mRecep">ONG Esperança</h3>
+       <p style="margin:0" id="mDist">Distância: 1,8 km · Demanda: 300 kg</p>
+       <span class="badge b-green" id="mCompat" style="margin-top:8px">Compatibilidade 94%</span>
+     </div>
+   </div>
+   <button class="btn" type="button" id="mConfirmBtn" onclick="confirmMatch()">Confirmar doação</button>
+   <button class="btn ghost" type="button" onclick="nextMatch()" style="margin-left:8px">Gerar outro match</button>
+   <div class="successMsg" id="msgMatch">✓ Doação confirmada — status atualizado para "em transporte" e mapa sincronizado.</div>
+ </div>
+`,
+mapa: `
+ <div class="eyebrow">MAPA INTERATIVO</div>
+ <h2>Doadores, receptores e rotas</h2>
+ <p>Alterne entre a visão simulada da rede e o mapa real da região. Clique em um marcador para ver detalhes.</p>
+ <div class="maptabs">
+   <button class="maptab active" id="tabSim" onclick="showMap('sim')">Mapa simulado (rede)</button>
+   <button class="maptab" id="tabReal" onclick="showMap('real')">Mapa real (Google Maps)</button>
+ </div>
+ <div class="filters" id="mapFilters">
+   <select id="fCity" onchange="filterMap()"><option value="">Cidade: todas</option><option>Feira de Santana</option><option>Salvador</option></select>
+   <select id="fFood" onchange="filterMap()"><option value="">Tipo de alimento: todos</option><option>Hortifruti</option><option>Panificados</option><option>Não perecíveis</option></select>
+   <select id="fStatus" onchange="filterMap()"><option value="">Status: todos</option><option value="disponível">Disponível</option><option value="em rota">Em rota</option><option value="entregue">Entregue</option></select>
+ </div>
+ <div class="legend" id="mapSimLegend"><span><span class="d" style="background:var(--green)"></span>Doadores</span><span><span class="d" style="background:var(--blue)"></span>Receptores</span></div>
+ <div class="mapwrap" id="mapSimWrap">
+   <svg viewBox="0 0 600 400">
+    <line x1="120" y1="90" x2="260" y2="180" stroke="#9AAE91" stroke-width="2" stroke-dasharray="4 4"/>
+    <line x1="420" y1="70" x2="260" y2="180" stroke="#9AAE91" stroke-width="2" stroke-dasharray="4 4"/>
+    <line x1="480" y1="260" x2="380" y2="300" stroke="#9AAE91" stroke-width="2" stroke-dasharray="4 4"/>
+    <circle class="dot" data-city="Feira de Santana" data-food="Hortifruti" data-status="disponível" cx="120" cy="90" r="9" fill="#3F6B44" onclick="pin('Supermercado Bom Preço','Doador · excedente de hortifruti · status: disponível')"/>
+    <circle class="dot" data-city="Feira de Santana" data-food="Panificados" data-status="disponível" cx="420" cy="70" r="9" fill="#3F6B44" onclick="pin('Padaria Trigo Dourado','Doador · pães · status: disponível')"/>
+    <circle class="dot" data-city="Feira de Santana" data-food="Hortifruti" data-status="em rota" cx="500" cy="150" r="9" fill="#3F6B44" onclick="pin('Feira Livre Central','Doador · hortifruti · status: em rota')"/>
+    <circle class="dot" data-city="Feira de Santana" data-food="" data-status="" cx="260" cy="180" r="9" fill="#33566F" onclick="pin('ONG Esperança','Receptor · demanda 300kg/semana · compat. 94%')"/>
+    <circle class="dot" data-city="Feira de Santana" data-food="" data-status="" cx="380" cy="300" r="9" fill="#33566F" onclick="pin('Cozinha Comunitária Sul','Receptor · demanda 150kg/semana')"/>
+    <circle class="dot" data-city="Salvador" data-food="Não perecíveis" data-status="entregue" cx="480" cy="260" r="9" fill="#3F6B44" onclick="pin('Restaurante Sabor Caseiro','Doador · pratos prontos · status: entregue')"/>
+   </svg>
+ </div>
+ <div class="mapwrap" id="mapRealWrap" style="display:none;height:450px">
+   <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124769.9912781337!2d-39.01463714534927!3d-12.244065919565475!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x71439dbd0766da9%3A0xed4d58d8df9d5ffe!2sFeira%20de%20Santana%20-%20Maria%20Quit%C3%A9ria%2C%20Feira%20de%20Santana%20-%20BA!5e0!3m2!1spt-BR!2sbr!4v1790452849198!5m2!1spt-BR!2sbr" width="100%" height="100%" style="border:0" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+ </div>
+ <div class="card" id="pinInfo" style="margin-top:14px">Selecione um marcador no mapa para ver detalhes.</div>
+`,
+frio: `
+ <div class="eyebrow">CADEIA DE FRIO</div>
+ <h2>Risco de conservação por região</h2>
+ <p>Combina temperatura média, infraestrutura disponível e distância logística.</p>
+ <div class="formula">score_risco = (temp_média/45 × 0,35) + ((1 − índice_infraestrutura) × 0,40) + (dist_logística_km/500 × 0,25)</div>
+ <div class="grid g3" style="margin:16px 0">
+   <div class="stat"><b style="color:var(--green)">0 – 0,4</b><span>risco baixo</span></div>
+   <div class="stat"><b style="color:var(--amber)">0,4 – 0,7</b><span>risco médio</span></div>
+   <div class="stat"><b style="color:var(--red)">0,7 – 1,0</b><span>risco crítico</span></div>
+ </div>
+ <div class="card">
+   <h3 style="font-size:.95rem">Calculadora de risco</h3>
+   <p style="margin:0">Ajuste os fatores de uma região e veja o score mudar em tempo real.</p>
+   <div class="slider-row"><label><span>Temperatura média</span><span id="lblTemp">28°C</span></label><input type="range" id="slTemp" min="10" max="45" value="28" oninput="calcRisk()"></div>
+   <div class="slider-row"><label><span>Índice de infraestrutura</span><span id="lblInfra">0.6</span></label><input type="range" id="slInfra" min="0" max="100" value="60" oninput="calcRisk()"></div>
+   <div class="slider-row"><label><span>Distância logística</span><span id="lblDist">180 km</span></label><input type="range" id="slDist" min="0" max="500" value="180" oninput="calcRisk()"></div>
+   <p style="margin-top:10px">Score calculado: <b id="riskScore" style="color:var(--ink)">—</b> <span class="badge" id="riskBadge"></span></p>
+ </div>
+ <div class="card">
+   <h3 style="font-size:.95rem">Top 5 regiões mais críticas (simulado)</h3>
+   <div class="regionrow"><span>Norte</span><span class="badge b-red">0,81 · Crítico</span></div>
+   <div class="regionrow"><span>Nordeste — semiárido</span><span class="badge b-red">0,74 · Crítico</span></div>
+   <div class="regionrow"><span>Centro-Oeste rural</span><span class="badge b-amber">0,58 · Médio</span></div>
+   <div class="regionrow"><span>Norte de Minas</span><span class="badge b-amber">0,52 · Médio</span></div>
+   <div class="regionrow" style="border:none"><span>Sul metropolitano</span><span class="badge b-green">0,28 · Baixo</span></div>
+ </div>
+ <p style="margin-top:14px">Este painel apoia decisões públicas sobre câmaras frias, frotas refrigeradas e centros de distribuição.</p>
+`,
+doacoes: `
+ <div class="eyebrow">RASTREAMENTO</div>
+ <h2>Ciclo de vida de uma doação</h2>
+ <p>Clique numa etapa para simular o avanço da doação.</p>
+ <div class="pipe" id="pipeline">
+  <div class="clickable" data-i="0" onclick="advancePipe(0)">Disponível</div>
+  <div class="clickable" data-i="1" onclick="advancePipe(1)">Match sugerido</div>
+  <div class="clickable" data-i="2" onclick="advancePipe(2)">Match confirmado</div>
+  <div class="clickable" data-i="3" onclick="advancePipe(3)">Em transporte</div>
+  <div class="clickable" data-i="4" onclick="advancePipe(4)">Entregue</div>
+ </div>
+ <div class="card">
+   <h3 style="font-size:.95rem">Registro (simulação de blockchain)</h3>
+   <table>
+    <tr><td>Origem</td><td>Supermercado Bom Preço</td></tr>
+    <tr><td>Destino</td><td>ONG Esperança</td></tr>
+    <tr><td>Data</td><td>24/09/2026</td></tr>
+    <tr><td>Status</td><td><span class="badge b-blue" id="pipeStatusBadge">Match confirmado</span></td></tr>
+   </table>
+   <p style="margin-top:10px">Cada etapa é registrada para dar transparência total à doação, do doador ao receptor final.</p>
+ </div>
+`,
+impacto: `
+ <div class="eyebrow">IMPACTO & GOVERNO</div>
+ <h2>O que a rede FoodBridge sustenta</h2>
+ <div class="grid g2" style="margin:16px 0">
+   <div class="card"><h3 style="font-size:.95rem">Segurança alimentar</h3><p style="margin:0">Mais alimentos chegando a quem precisa, com menos desperdício no caminho.</p></div>
+   <div class="card"><h3 style="font-size:.95rem">Sustentabilidade ambiental</h3><p style="margin:0">Redução do desperdício e dos impactos ambientais associados a ele.</p></div>
+   <div class="card"><h3 style="font-size:.95rem">Economia para empresas</h3><p style="margin:0">Melhor aproveitamento do que seria descartado.</p></div>
+   <div class="card"><h3 style="font-size:.95rem">Dignidade e acesso</h3><p style="margin:0">Fortalecimento do acesso à alimentação para quem mais precisa.</p></div>
+ </div>
+ <div class="card">
+   <h3 style="font-size:.95rem">Painel público (dados agregados)</h3>
+   <p>O poder público acessa esses dados para fiscalização, planejamento e priorização de investimentos em regiões vulneráveis.</p>
+   <div class="tag-row"><span class="pill">Fiscalização</span><span class="pill">Planejamento</span><span class="pill">Regiões vulneráveis</span><span class="pill">Infraestrutura</span></div>
+ </div>
+ <div class="card" style="margin-top:14px">
+   <h3 style="font-size:.95rem">ESG e gamificação para empresas doadoras</h3>
+   <p>Empresas acumulam pontos por doar, reduzir desperdício e atingir metas ambientais.</p>
+   <div class="tag-row"><span class="badge b-green">Selo Ouro — Supermercado Bom Preço</span><span class="badge b-amber">Selo Prata — Padaria Trigo Dourado</span></div>
+ </div>
+`,
+roadmap: `
+ <div class="eyebrow">PRIORIDADES</div>
+ <h2>Do protótipo à evolução futura</h2>
+ <div class="grid g3" style="margin-top:16px">
+   <div class="card">
+     <h3 style="font-size:.95rem">Essencial (protótipo)</h3>
+     <p style="margin:0">Cadastros, alimentos, geolocalização, match, mapa, rotas, cadeia de frio, dashboard.</p>
+   </div>
+   <div class="card">
+     <h3 style="font-size:.95rem">Adicionais</h3>
+     <p style="margin:0">IA preditiva, rotas avançadas, IoT, visão computacional, blockchain, ESG/gamificação.</p>
+   </div>
+   <div class="card">
+     <h3 style="font-size:.95rem">Evolução futura</h3>
+     <p style="margin:0">Integração com API do INMET, dados do CNES e do IBGE, substituindo os dados simulados por dados reais.</p>
+   </div>
+ </div>
+ <div class="card" style="margin-top:16px">
+   <h3 style="font-size:.95rem">Stack técnica de referência</h3>
+   <div class="tag-row">
+     <span class="pill">React + Tailwind</span><span class="pill">Node.js + Express</span><span class="pill">PostgreSQL</span>
+     <span class="pill">API REST</span><span class="pill">Leaflet.js + OSM</span><span class="pill">Nominatim</span>
+   </div>
+ </div>
+ <div class="footer">FoodBridge — protótipo estático com dados simulados, para fins de demonstração.</div>
+`
+};
+
+function pin(name, info){
+  document.getElementById('pinInfo').innerHTML = '<b>'+name+'</b><br><span style="color:var(--ink-soft)">'+info+'</span>';
+}
+
+// ---- Mapa: abas + filtros ----
+function showMap(which){
+  document.getElementById('mapSimWrap').style.display = which==='sim' ? '' : 'none';
+  document.getElementById('mapSimLegend').style.display = which==='sim' ? '' : 'none';
+  document.getElementById('mapFilters').style.display = which==='sim' ? '' : 'none';
+  document.getElementById('mapRealWrap').style.display = which==='real' ? '' : 'none';
+  document.getElementById('tabSim').classList.toggle('active', which==='sim');
+  document.getElementById('tabReal').classList.toggle('active', which==='real');
+}
+function filterMap(){
+  const city = document.getElementById('fCity').value;
+  const food = document.getElementById('fFood').value;
+  const status = document.getElementById('fStatus').value;
+  document.querySelectorAll('#mapSimWrap .dot').forEach(d=>{
+    const okCity = !city || d.dataset.city===city;
+    const okFood = !food || d.dataset.food===food || d.dataset.food==='';
+    const okStatus = !status || d.dataset.status===status || d.dataset.status==='';
+    d.style.display = (okCity && okFood && okStatus) ? '' : 'none';
+  });
+}
+
+// ---- Cadastro ----
+function fakeSubmit(kind){
+  document.getElementById(kind==='doador' ? 'msgDoador':'msgReceptor').classList.add('show');
+}
+
+// ---- Alimentos ----
+const FOOD_MATCH = {
+ 'Banana': {receptor:'ONG Esperança', dist:'1,8 km', compat:94},
+ 'Pão francês': {receptor:'Cozinha Comunitária Sul', dist:'2,4 km', compat:88},
+ 'Tomate': {receptor:'ONG Esperança', dist:'2,0 km', compat:90},
+ 'Arroz (pacotes)': {receptor:'Banco de Alimentos Central', dist:'5,1 km', compat:97},
+ 'Leite': {receptor:'Cozinha Comunitária Sul', dist:'2,6 km', compat:91},
+};
+function showFoodMatch(name){
+  const m = FOOD_MATCH[name];
+  document.getElementById('foodMatchOut').innerHTML = m
+    ? '<b>'+name+'</b> combina melhor com <b>'+m.receptor+'</b> — distância '+m.dist+', compatibilidade <span class="badge b-green">'+m.compat+'%</span>'
+    : 'Sem sugestão para este item.';
+}
+function filterFoods(){
+  const q = document.getElementById('foodSearch').value.toLowerCase();
+  document.querySelectorAll('#foodTable tr[data-name]').forEach(tr=>{
+    tr.style.display = tr.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+function addFood(){
+  document.getElementById('foodMatchOut').innerHTML = 'Novo item adicionado à lista de excedentes — a IA já está calculando a rotatividade e o risco.';
+}
+
+// ---- Match & IA ----
+const MATCHES = [
+ {prod:'Banana — 120 kg', valid:'2 dias', recep:'ONG Esperança', dist:'Distância: 1,8 km · Demanda: 300 kg', compat:94},
+ {prod:'Pão francês — 40 kg', valid:'1 dia', recep:'Cozinha Comunitária Sul', dist:'Distância: 2,4 km · Demanda: 150 kg', compat:88},
+ {prod:'Tomate — 85 kg', valid:'3 dias', recep:'ONG Esperança', dist:'Distância: 2,0 km · Demanda: 300 kg', compat:90},
+ {prod:'Leite — 60 L', valid:'4 dias', recep:'Cozinha Comunitária Sul', dist:'Distância: 2,6 km · Demanda: 150 kg', compat:91},
+];
+let matchIdx = 0;
+function nextMatch(){
+  matchIdx = (matchIdx+1) % MATCHES.length;
+  const m = MATCHES[matchIdx];
+  document.getElementById('mProd').textContent = m.prod;
+  document.getElementById('mValid').textContent = 'Validade: '+m.valid;
+  document.getElementById('mRecep').textContent = m.recep;
+  document.getElementById('mDist').textContent = m.dist;
+  document.getElementById('mCompat').textContent = 'Compatibilidade '+m.compat+'%';
+  document.getElementById('msgMatch').classList.remove('show');
+}
+function confirmMatch(){
+  document.getElementById('msgMatch').classList.add('show');
+}
+
+// ---- Cadeia de frio ----
+function calcRisk(){
+  const temp = +document.getElementById('slTemp').value;
+  const infra = +document.getElementById('slInfra').value/100;
+  const dist = +document.getElementById('slDist').value;
+  document.getElementById('lblTemp').textContent = temp+'°C';
+  document.getElementById('lblInfra').textContent = infra.toFixed(2);
+  document.getElementById('lblDist').textContent = dist+' km';
+  const score = (temp/45*0.35) + ((1-infra)*0.40) + (dist/500*0.25);
+  document.getElementById('riskScore').textContent = score.toFixed(2);
+  const badge = document.getElementById('riskBadge');
+  if(score < 0.4){ badge.className='badge b-green'; badge.textContent='Baixo'; }
+  else if(score < 0.7){ badge.className='badge b-amber'; badge.textContent='Médio'; }
+  else { badge.className='badge b-red'; badge.textContent='Crítico'; }
+}
+
+// ---- Doações: pipeline ----
+function advancePipe(i){
+  const labels = ['Disponível','Match sugerido','Match confirmado','Em transporte','Entregue'];
+  const badges = ['b-amber','b-amber','b-blue','b-blue','b-green'];
+  document.querySelectorAll('#pipeline div').forEach(d=>d.classList.toggle('on', +d.dataset.i <= i));
+  const sb = document.getElementById('pipeStatusBadge');
+  sb.textContent = labels[i];
+  sb.className = 'badge '+badges[i];
+}
+
+// ---- Dashboard: números animados ----
+const DASH_BASE = [
+ {v:2842, s:'t', label:'alimentos salvos'},
+ {v:1.2, s:' mi', label:'famílias atendidas'},
+ {v:5340, s:' t', label:'CO₂ evitadas'},
+ {v:18.7, s:' mi L', label:'água economizada'},
+ {v:128540, s:'', label:'doações realizadas'},
+ {v:94, s:'%', label:'compatibilidade média dos matches'},
+];
+function renderDash(){
+  const mult = +document.getElementById('dashPeriod').value;
+  const wrap = document.getElementById('dashStats');
+  wrap.innerHTML = DASH_BASE.map(d=>{
+    const val = d.label==='compatibilidade média dos matches' ? d.v : +(d.v*mult).toFixed(1);
+    return '<div class="stat"><b>'+val.toLocaleString('pt-BR')+d.s+'</b><span>'+d.label+'</span></div>';
+  }).join('');
+  const total = 100*mult;
+  document.getElementById('barEntregue').style.width = '82%';
+  document.getElementById('barTransporte').style.width = '34%';
+  document.getElementById('barConfirmado').style.width = '21%';
+}
+
+const mainEl = document.getElementById('main');
+const sideEl = document.getElementById('sidenav');
+const topEl = document.getElementById('topnav');
+
+sideEl.innerHTML = '<div class="brand">FoodBridge<small>Conectando quem tem com quem precisa</small></div>' +
+  SECTIONS.map(s=>`<button data-s="${s.id}">${s.label}</button>`).join('');
+topEl.innerHTML = SECTIONS.map(s=>`<button data-s="${s.id}">${s.label}</button>`).join('');
+mainEl.innerHTML = SECTIONS.map(s=>`<div class="section" id="sec-${s.id}">${content[s.id]}</div>`).join('');
+
+function show(id){
+  document.querySelectorAll('.section').forEach(e=>e.classList.toggle('active', e.id==='sec-'+id));
+  document.querySelectorAll('nav.side button, .topbar button').forEach(b=>b.classList.toggle('active', b.dataset.s===id));
+  window.scrollTo({top:0,behavior:'instant'});
+  if(id==='dashboard') renderDash();
+  if(id==='frio') calcRisk();
+  if(id==='doacoes') advancePipe(2);
+}
+document.querySelectorAll('nav.side button, .topbar button').forEach(b=>b.addEventListener('click',()=>show(b.dataset.s)));
+show('inicio');
+</script>
+</body>
+</html>
