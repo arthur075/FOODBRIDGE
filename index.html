@@ -82,12 +82,6 @@ input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-rad
 @media(max-width:700px){.match{grid-template-columns:1fr}}
 .formula{background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:10px 14px;font-size:.82rem;color:var(--ink-soft);font-family:ui-monospace,Menlo,monospace}
 .mapwrap{position:relative;background:var(--green-tint);border:1px solid var(--line);border-radius:var(--radius);height:400px;overflow:hidden}
-.mapwrap svg{width:100%;height:100%}
-.dot{cursor:pointer}
-.legend{display:flex;gap:18px;margin:10px 0;font-size:.8rem;color:var(--ink-soft)}
-.legend span.d{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
-.filters{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-.filters select{width:auto}
 .riskbar{height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:6px}
 .riskbar i{display:block;height:100%}
 .regionrow{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:.85rem}
@@ -95,9 +89,6 @@ input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-rad
 .note{font-size:.78rem;color:var(--ink-soft);background:var(--amber-tint);border-radius:8px;padding:8px 12px;display:inline-block;margin-top:10px}
 .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .pill{background:var(--blue-tint);color:var(--blue);border-radius:20px;padding:5px 12px;font-size:.74rem;font-weight:600}
-.maptabs{display:flex;gap:8px;margin-bottom:12px}
-.maptab{background:var(--panel);border:1px solid var(--line);color:var(--ink-soft);padding:7px 14px;border-radius:20px;font-size:.8rem;font-weight:600;cursor:pointer}
-.maptab.active{background:var(--green);color:#fff;border-color:var(--green)}
 tr.row-click{cursor:pointer;transition:background .15s}
 tr.row-click:hover{background:var(--green-tint)}
 .pipe div.clickable{cursor:pointer}
@@ -260,36 +251,21 @@ match: `
  </div>
 `,
 mapa: `
- <div class="eyebrow">MAPA INTERATIVO</div>
- <h2>Doadores, receptores e rotas</h2>
- <p>Alterne entre a visão simulada da rede e o mapa real da região. Clique em um marcador para ver detalhes.</p>
- <div class="maptabs">
-   <button class="maptab active" id="tabSim" onclick="showMap('sim')">Mapa simulado (rede)</button>
-   <button class="maptab" id="tabReal" onclick="showMap('real')">Mapa real (Google Maps)</button>
- </div>
- <div class="filters" id="mapFilters">
-   <select id="fCity" onchange="filterMap()"><option value="">Cidade: todas</option><option>Feira de Santana</option><option>Salvador</option></select>
-   <select id="fFood" onchange="filterMap()"><option value="">Tipo de alimento: todos</option><option>Hortifruti</option><option>Panificados</option><option>Não perecíveis</option></select>
-   <select id="fStatus" onchange="filterMap()"><option value="">Status: todos</option><option value="disponível">Disponível</option><option value="em rota">Em rota</option><option value="entregue">Entregue</option></select>
- </div>
- <div class="legend" id="mapSimLegend"><span><span class="d" style="background:var(--green)"></span>Doadores</span><span><span class="d" style="background:var(--blue)"></span>Receptores</span></div>
- <div class="mapwrap" id="mapSimWrap">
-   <svg viewBox="0 0 600 400">
-    <line x1="120" y1="90" x2="260" y2="180" stroke="#9AAE91" stroke-width="2" stroke-dasharray="4 4"/>
-    <line x1="420" y1="70" x2="260" y2="180" stroke="#9AAE91" stroke-width="2" stroke-dasharray="4 4"/>
-    <line x1="480" y1="260" x2="380" y2="300" stroke="#9AAE91" stroke-width="2" stroke-dasharray="4 4"/>
-    <circle class="dot" data-city="Feira de Santana" data-food="Hortifruti" data-status="disponível" cx="120" cy="90" r="9" fill="#3F6B44" onclick="pin('Supermercado Bom Preço','Doador · excedente de hortifruti · status: disponível')"/>
-    <circle class="dot" data-city="Feira de Santana" data-food="Panificados" data-status="disponível" cx="420" cy="70" r="9" fill="#3F6B44" onclick="pin('Padaria Trigo Dourado','Doador · pães · status: disponível')"/>
-    <circle class="dot" data-city="Feira de Santana" data-food="Hortifruti" data-status="em rota" cx="500" cy="150" r="9" fill="#3F6B44" onclick="pin('Feira Livre Central','Doador · hortifruti · status: em rota')"/>
-    <circle class="dot" data-city="Feira de Santana" data-food="" data-status="" cx="260" cy="180" r="9" fill="#33566F" onclick="pin('ONG Esperança','Receptor · demanda 300kg/semana · compat. 94%')"/>
-    <circle class="dot" data-city="Feira de Santana" data-food="" data-status="" cx="380" cy="300" r="9" fill="#33566F" onclick="pin('Cozinha Comunitária Sul','Receptor · demanda 150kg/semana')"/>
-    <circle class="dot" data-city="Salvador" data-food="Não perecíveis" data-status="entregue" cx="480" cy="260" r="9" fill="#3F6B44" onclick="pin('Restaurante Sabor Caseiro','Doador · pratos prontos · status: entregue')"/>
-   </svg>
- </div>
- <div class="mapwrap" id="mapRealWrap" style="display:none;height:450px">
-   <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124769.9912781337!2d-39.01463714534927!3d-12.244065919565475!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x71439dbd0766da9%3A0xed4d58d8df9d5ffe!2sFeira%20de%20Santana%20-%20Maria%20Quit%C3%A9ria%2C%20Feira%20de%20Santana%20-%20BA!5e0!3m2!1spt-BR!2sbr!4v1790452849198!5m2!1spt-BR!2sbr" width="100%" height="100%" style="border:0" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
- </div>
- <div class="card" id="pinInfo" style="margin-top:14px">Selecione um marcador no mapa para ver detalhes.</div>
+  <div class="eyebrow">MAPA INTERATIVO</div>
+  <h2>Mapa de doadores e receptores</h2>
+  <p>Visualize a região de atuação do FoodBridge diretamente no Google Maps.</p>
+  <div class="mapwrap" style="height:450px">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124769.9912781337!2d-39.01463714534927!3d-12.244065919565475!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x71439dbd0766da9%3A0xed4d58d8df9d5ffe!2sFeira%20de%20Santana%20-%20Maria%20Quit%C3%A9ria%2C%20Feira%20de%20Santana%20-%20BA!5e0!3m2!1spt-BR!2sbr!4v1790452849198!5m2!1spt-BR!2sbr"
+      width="100%"
+      height="100%"
+      style="border:0"
+      allowfullscreen
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin"
+      title="Mapa do Google Maps de Feira de Santana">
+    </iframe>
+  </div>
 `,
 frio: `
  <div class="eyebrow">CADEIA DE FRIO</div>
@@ -388,31 +364,6 @@ roadmap: `
  <div class="footer">FoodBridge — protótipo estático com dados simulados, para fins de demonstração.</div>
 `
 };
-
-function pin(name, info){
-  document.getElementById('pinInfo').innerHTML = '<b>'+name+'</b><br><span style="color:var(--ink-soft)">'+info+'</span>';
-}
-
-// ---- Mapa: abas + filtros ----
-function showMap(which){
-  document.getElementById('mapSimWrap').style.display = which==='sim' ? '' : 'none';
-  document.getElementById('mapSimLegend').style.display = which==='sim' ? '' : 'none';
-  document.getElementById('mapFilters').style.display = which==='sim' ? '' : 'none';
-  document.getElementById('mapRealWrap').style.display = which==='real' ? '' : 'none';
-  document.getElementById('tabSim').classList.toggle('active', which==='sim');
-  document.getElementById('tabReal').classList.toggle('active', which==='real');
-}
-function filterMap(){
-  const city = document.getElementById('fCity').value;
-  const food = document.getElementById('fFood').value;
-  const status = document.getElementById('fStatus').value;
-  document.querySelectorAll('#mapSimWrap .dot').forEach(d=>{
-    const okCity = !city || d.dataset.city===city;
-    const okFood = !food || d.dataset.food===food || d.dataset.food==='';
-    const okStatus = !status || d.dataset.status===status || d.dataset.status==='';
-    d.style.display = (okCity && okFood && okStatus) ? '' : 'none';
-  });
-}
 
 // ---- Cadastro ----
 function fakeSubmit(kind){
